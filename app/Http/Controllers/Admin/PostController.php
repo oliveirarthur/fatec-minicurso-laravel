@@ -30,10 +30,25 @@ class PostController extends Controller
 
     public function list()
     {
-        $posts = Post::all();
+        $posts = Post::withTrashed()->get();
         return view('admin.post.list', [
             'posts' => $posts,
         ]);
+    }
+
+    public function delete($id)
+    {
+        try {
+            $post = Post::findOrFail($id);
+        } catch(\Exception $e) {
+            return back()->with('message', 'Post não encontrado para exclusão');
+        }
+        
+        if ($post->delete()) {
+            return redirect('/admin/posts');
+        }
+
+        return back()->with('message', 'Erro ao excluir o post #'.$id);
     }
     
 }

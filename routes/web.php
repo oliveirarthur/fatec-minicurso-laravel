@@ -15,6 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/admin/post/{id?}', 'Admin\PostController@form');
-Route::post('/admin/post/save/{id?}', 'Admin\PostController@save');
-Route::get('/admin/posts', 'Admin\PostController@list');
+Route::group([
+    'prefix' => 'admin',
+    'namespace' => 'Admin',
+    'middleware' => 'auth',
+], function () {
+    Route::get('/post/{id?}', 'PostController@form');
+    Route::post('/post/save/{id?}', 'PostController@save');
+    Route::get('/posts', 'PostController@list')->name('home');
+    Route::get('/post/{id}/delete', 'PostController@delete');
+});
+Auth::routes();
